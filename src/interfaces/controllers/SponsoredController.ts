@@ -22,7 +22,7 @@ export class SponsoredContentController {
         type
        } = sponsoredContentSchema.parse(request.body);
 
-       const user_id = request.user.sub;
+       const user_id = request.user.id;
 
         const created = await service.create({
           user_id,

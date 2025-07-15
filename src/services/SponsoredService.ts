@@ -1,7 +1,7 @@
 import { CreateSponsoredContentDTO } from '@/interfaces/dtos/sponsoredDto';
 import { SponsoredContent } from '@/domain/entities/Sponsored';
 import { ISponsoredContentRepository } from '@/domain/repositories/ISponsoredRepository';
-import { ObjectId } from 'bson'; 
+import { randomUUID } from 'crypto';
 import { UnauthorizedError } from '@/shared/errors/error';
 import { ISubscriptionRepository } from '@/domain/repositories/ISubscriptionRepository';
 
@@ -24,7 +24,7 @@ export class SponsoredService {
     const endDate = new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000);
 
     const content = new SponsoredContent(
-      new ObjectId().toHexString(),
+      randomUUID(),
       data.user_id,
       data.type,
       data.content,

@@ -1,11 +1,10 @@
 import { PrismaClient } from '@prisma/client';
-import { ObjectId } from 'bson'; 
+import { randomUUID } from 'crypto';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  
-  const userId = new ObjectId().toHexString();
+  const userId = randomUUID();
 
   const subscription = await prisma.subscription.create({
     data: {
@@ -50,4 +49,4 @@ main()
   .catch((error) => {
     console.error("Erro ao executar o seed:", error);
     return prisma.$disconnect().finally(() => process.exit(1));
-  });
+});
