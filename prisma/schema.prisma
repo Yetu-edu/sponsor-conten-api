@@ -9,13 +9,14 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+
 model Subscription {
-  id String  @id @default(auto()) @map("_id") @db.ObjectId
-  user_id    String              @unique @db.ObjectId 
+  id String  @id @default(uuid())
+  user_id    String              @unique
   plan       SubscriptionPlan
   status     SubscriptionStatus
   created_at DateTime            @default(now())
@@ -27,8 +28,8 @@ model Subscription {
 }
 
 model SponsoredContent {
-  id         String              @id @default(auto()) @map("_id") @db.ObjectId
-  user_id    String              @db.ObjectId
+  id         String              @id @default(uuid()) 
+  user_id    String              
   type       SponsoredContentType
   content    String
   start_date DateTime

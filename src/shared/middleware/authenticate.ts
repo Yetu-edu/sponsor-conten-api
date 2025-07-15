@@ -1,30 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { env } from '../../config/env';
 
-interface Payload {
-  sub: string;
-}
-
-export function ensureAuthenticated(req: Request, res: Response, next: NextFunction): void {
+export function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
-    res.status(401).json({ message: 'Token ausente' });
-    return;
-  }
+  if (!authHeader) return res.status(401).json({ message: 'Token ausente' });
 
   const [, token] = authHeader.split(' ');
 
   try {
-    const decoded = jwt.verify(token, env.JWT_SECRET) as Payload;
-
-    req.user = {
-      sub: decoded.sub,
-    };
-
-    next();
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { sub: string };
+    req.user = { id: decoded.sub };
+    return next();
   } catch {
-    res.status(401).json({ message: 'Token inválido' });
+    return res.status(401).json({ message: 'Token inválido' });
   }
 }

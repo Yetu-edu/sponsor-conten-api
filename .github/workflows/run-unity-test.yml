@@ -1,0 +1,28 @@
+name: Run unity test
+
+# Toda vez que um usuário fizer push, a gente vai executar uma sequência de tarefas
+on: [push]
+
+jobs:
+  run-unity-test:
+    name: Run unity test
+    runs-on: ubuntu-latest  # Vai executar os testes unitários da minha aplicação no ambiente Linux, a última versão
+    
+    services:
+      postgres:
+        image: bitnami/postgresql
+        ports:
+         - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v3  # Vai baixar o código na máquina
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - run: npm ci
+
+      - run: npm run test
+       
