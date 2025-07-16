@@ -7,6 +7,7 @@ import {errorHandler } from "./shared/errors/errorHandler";
 
 //Rotas
 import { sponsoredContentRoutes } from '@/interfaces/routes/sponsored.routes';
+import { verificationSealRoutes } from '@/interfaces/routes/verificationSeal.routes';
 
 export const app = express();
 
@@ -22,6 +23,7 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser())
 app.use('/api/v1', sponsoredContentRoutes);
+app.use('/api/v1', verificationSealRoutes)
 
 // Swagger disponível em /docs
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

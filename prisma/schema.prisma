@@ -32,3 +32,12 @@ model SponsoredContent {
 
   @@map("sponsored_content")
 }
+
+model verificationSeal {
+  id         String   @id @default(uuid())
+  user_id    String  @unique
+  is_verified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@map("verification_seal")
+}
