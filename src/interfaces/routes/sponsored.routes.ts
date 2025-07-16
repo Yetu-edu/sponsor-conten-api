@@ -1,88 +1,134 @@
 import { Router } from 'express';
-import { SponsoredContentController } from '@/interfaces/controllers/SponsoredController';
+import { SponsorController } from '@/interfaces/controllers/SponsoredController';
 import { ensureAuthenticated } from '@/shared/middleware/authenticate';
 
 const sponsoredContentRoutes = Router();
-const controller = new SponsoredContentController();
+const sponsorController = new SponsorController();
 
 /**
  * @swagger
  * tags:
  *   name: Sponsored Content
- *   description: Conteúdo patrocinado, como posts ou badges.
+ *   description: Conteúdo patrocinado.
  */
 
 /**
  * @swagger
- * /sponsored-content:
+ * /sponsor:
  *   post:
- *     summary: Cria um conteúdo patrocinado.
- *     tags: [Sponsored Content]
- *     security:
- *       - bearerAuth: []
+ *     summary: Criar um novo patrocínio
+ *     tags:
+ *       - Patrocínio
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - content
- *               - type
  *             properties:
- *               content:
+ *               refContent:
  *                 type: string
- *                 example: "Exemplo de conteúdo patrocinado"
- *               type:
+ *                 format: uuid
+ *               refType:
  *                 type: string
- *                 enum: [badge, post]
- *                 example: "badge"
+ *                 enum: [curso, video, mentoria, produto, bolsa, paper, ticket, flick]
+ *               days:
+ *                 type: number
+ *               filters:
+ *                 type: object
+ *                 properties:
+ *                   area_of_study:
+ *                     type: string
+ *                   interest:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                   localization:
+ *                     type: string
+ *                   curse:
+ *                     type: string
+ *                   academic_level:
+ *                     type: string
  *     responses:
  *       201:
- *         description: Conteúdo criado com sucesso.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *       400:
- *         description: Requisição inválida.
- *       401:
- *         description: Token inválido ou ausente.
- *       500:
- *         description: Erro interno no servidor.
+ *         description: Patrocínio criado com sucesso
  */
-sponsoredContentRoutes.post('/sponsored-content', ensureAuthenticated, (req, res) => controller.create(req, res));
+sponsoredContentRoutes.post('/sponsor', sponsorController.create);
 
 /**
  * @swagger
- * /sponsored-content:
+ * /sponsor:
  *   get:
- *     summary: Lista os conteúdos patrocinados ativos por tipo.
- *     tags: [Sponsored Content]
+ *     summary: Listar todos os patrocínios
+ *     tags:
+ *       - Patrocínio
+ *     responses:
+ *       200:
+ *         description: Lista de patrocínios
+ */
+sponsoredContentRoutes.get('/sponsor', sponsorController.getAll);
+
+/**
+ * @swagger
+ * /sponsor/by-type:
+ *   get:
+ *     summary: Buscar patrocínios por tipo
+ *     tags:
+ *       - Patrocínio
  *     parameters:
- *       - name: type
- *         in: query
+ *       - in: query
+ *         name: type
  *         required: true
  *         schema:
  *           type: string
- *           enum: [badge, post]
- *         description: O tipo de conteúdo patrocinado a ser listado.
+ *           enum: [curso, video, mentoria, produto, bolsa, paper, ticket, flick]
  *     responses:
  *       200:
- *         description: Conteúdos encontrados com sucesso.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *       400:
- *         description: Requisição inválida.
- *       404:
- *         description: Nenhum conteúdo encontrado.
- *       500:
- *         description: Erro interno no servidor.
+ *         description: Lista de patrocínios por tipo
  */
-sponsoredContentRoutes.get('/sponsored-content', (req, res) => controller.list(req, res));
+sponsoredContentRoutes.get('/sponsor/by-type', sponsorController.getByType);
+
+/**
+ * @swagger
+ * /sponsor:
+ *   patch:
+ *     summary: Estender dias de um patrocínio
+ *     tags:
+ *       - Patrocínio
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               extraDays:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Dias estendidos com sucesso
+ */
+sponsoredContentRoutes.patch('/sponsor', sponsorController.update);
+
+/**
+ * @swagger
+ * /sponsor/{id}:
+ *   delete:
+ *     summary: Excluir patrocínio
+ *     tags:
+ *       - Patrocínio
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Patrocínio excluído
+ */
+sponsoredContentRoutes.delete('/sponsor/:id', sponsorController.delete);
 
 export { sponsoredContentRoutes };

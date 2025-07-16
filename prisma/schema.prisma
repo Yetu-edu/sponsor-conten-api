@@ -13,62 +13,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-model Subscription {
-  id String  @id @default(uuid())
-  user_id    String              @unique
-  plan       SubscriptionPlan
-  status     SubscriptionStatus
-  created_at DateTime            @default(now())
-  expires_at DateTime
-
-  sponsoredContents SponsoredContent[] @relation("UserSponsoredContent")
-
-  @@map("subscription")
-}
-
 model SponsoredContent {
-  id         String              @id @default(uuid()) 
-  user_id    String              
-  type       SponsoredContentType
-  content    String
-  start_date DateTime
-  end_date   DateTime
-  status     SponsoredContentStatus
-  created_at DateTime            @default(now())
-  updated_at DateTime            @updatedAt
-
-  subscription Subscription?     @relation("UserSponsoredContent", fields: [user_id], references: [user_id])
+  id             String   @id @default(uuid())
+  ref_content    String
+  type_content   String
+  price_per_day  Decimal
+  days           Int
+  total_price    Decimal
+  start_date     DateTime 
+  end_date       DateTime 
+  area_of_study     String
+  interest       String[]
+  localization   String
+  curse          String
+  academic_level String
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
 
   @@map("sponsored_content")
-}
-
-enum SponsoredContentType {
-  badge
-  post
-
-  @@map("sponsored_content_type")
-}
-
-enum SponsoredContentStatus {
-  active
-  inactive
-
-  @@map("sponsored_content_status")
-}
-
-enum SubscriptionPlan {
-  basic
-  premium
-  enterprise
-
-  @@map("subscription_plan")
-}
-
-enum SubscriptionStatus {
-  active
-  inactive
-  expired
-
-  @@map("subscription_status")
 }
