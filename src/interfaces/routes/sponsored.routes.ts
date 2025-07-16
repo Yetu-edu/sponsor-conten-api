@@ -14,7 +14,7 @@ const sponsorController = new SponsorController();
 
 /**
  * @swagger
- * /sponsor:
+ * /api/v1/sponsor:
  *   post:
  *     summary: Criar um novo patrocínio
  *     tags:
@@ -53,11 +53,11 @@ const sponsorController = new SponsorController();
  *       201:
  *         description: Patrocínio criado com sucesso
  */
-sponsoredContentRoutes.post('/sponsor', sponsorController.create);
+sponsoredContentRoutes.post('/sponsor',  ensureAuthenticated, sponsorController.create);
 
 /**
  * @swagger
- * /sponsor:
+ * /api/v1/sponsor:
  *   get:
  *     summary: Listar todos os patrocínios
  *     tags:
@@ -70,7 +70,7 @@ sponsoredContentRoutes.get('/sponsor', sponsorController.getAll);
 
 /**
  * @swagger
- * /sponsor/by-type:
+ * /api/v1/sponsor/by-type:
  *   get:
  *     summary: Buscar patrocínios por tipo
  *     tags:
@@ -90,7 +90,7 @@ sponsoredContentRoutes.get('/sponsor/by-type', sponsorController.getByType);
 
 /**
  * @swagger
- * /sponsor:
+ * /api/v1/sponsor:
  *   patch:
  *     summary: Estender dias de um patrocínio
  *     tags:
@@ -110,11 +110,11 @@ sponsoredContentRoutes.get('/sponsor/by-type', sponsorController.getByType);
  *       200:
  *         description: Dias estendidos com sucesso
  */
-sponsoredContentRoutes.patch('/sponsor', sponsorController.update);
+sponsoredContentRoutes.patch('/sponsor',  ensureAuthenticated, sponsorController.update);
 
 /**
  * @swagger
- * /sponsor/{id}:
+ * /api/v1/sponsor/{id}:
  *   delete:
  *     summary: Excluir patrocínio
  *     tags:
@@ -129,6 +129,6 @@ sponsoredContentRoutes.patch('/sponsor', sponsorController.update);
  *       204:
  *         description: Patrocínio excluído
  */
-sponsoredContentRoutes.delete('/sponsor/:id', sponsorController.delete);
+sponsoredContentRoutes.delete('/sponsor/:id',  ensureAuthenticated, sponsorController.delete);
 
 export { sponsoredContentRoutes };

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Request, Response } from 'express';
-import { makeSponsoredContentService } from '@/interfaces/factory/sponsoredFactory';
+import { makeSponsoredContentService } from '@/interfaces/factories/sponsoredFactory';
 
 const createSponsorshipSchema = z.object({
   refContent: z.uuid(),
