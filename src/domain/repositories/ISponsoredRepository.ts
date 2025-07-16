@@ -1,8 +1,11 @@
 import { SponsoredContent } from '@/domain/entities/Sponsored';
-
-export interface ISponsoredContentRepository {
-  create(content: SponsoredContent): Promise<SponsoredContent>;
-  findActiveByType(type: string): Promise<SponsoredContent[]>;
+export interface ISponsorshipRepository {
+  create(data: SponsoredContent): Promise<SponsoredContent>;
   findById(id: string): Promise<SponsoredContent | null>;
-  save(content: SponsoredContent): Promise<void>;
+  findByType(type: SponsoredContent['type_content']): Promise<SponsoredContent[]>;
+  listAll(): Promise<SponsoredContent[]>;
+  updateDays(id: string, days: number, newEndDate: Date): Promise<void>;
+  delete(id: string): Promise<void>;
+  findExpired(currentDate: Date): Promise<SponsoredContent[]>;
+  save(data: SponsoredContent): Promise<void>;
 }

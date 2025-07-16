@@ -1,42 +1,86 @@
-import { CreateSponsoredContentDTO } from '@/interfaces/dtos/sponsoredDto';
+import crypto from 'crypto';
 import { SponsoredContent } from '@/domain/entities/Sponsored';
-import { ISponsoredContentRepository } from '@/domain/repositories/ISponsoredRepository';
-import { randomUUID } from 'crypto';
-import { UnauthorizedError } from '@/shared/errors/error';
-import { ISubscriptionRepository } from '@/domain/repositories/ISubscriptionRepository';
+import { CreateSponsorshipDTO, UpdateSponsorshipDaysDTO } from '@/interfaces/dtos/sponsoredDto';
+import { ISponsorshipRepository } from '@/domain/repositories/ISponsoredRepository';
+import { AppError } from '@/shared/errors/error';
 
-export class SponsoredService {
-  constructor(
-      private sponsorRepository: ISponsoredContentRepository,
-      private subscriptionRepository: ISubscriptionRepository
-    ) {}
+export class SponsorService {
+  constructor(private sponsoredRepository: ISponsorshipRepository) {}
 
-  async create(data: CreateSponsoredContentDTO) {
-
-    const subscription = await this.subscriptionRepository.findActiveByUserId(data.user_id);
-
-    if (!subscription) {
-       throw new UnauthorizedError('Você precisa de uma assinatura ativa para criar conteúdo patrocinado.');
-    }
-
-    const duration = data.duration_in_days ?? 30;
+  async create(dto: CreateSponsorshipDTO): Promise<SponsoredContent> {
+    const pricePerDay = 500;
+    const days = dto.days;
+    const id = crypto.randomUUID();
     const startDate = new Date();
-    const endDate = new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000);
+    const endDate = new Date();
+    endDate.setDate(startDate.getDate() + days);
 
     const content = new SponsoredContent(
-      randomUUID(),
-      data.user_id,
-      data.type,
-      data.content,
+      id,
+      dto.refContent,
+      dto.refType,
+      pricePerDay,
+      days,
       startDate,
       endDate,
-      'active'
+      dto.filters
     );
 
-    return await this.sponsorRepository.create(content);
+    return await this.sponsoredRepository.create(content);
   }
 
-  async getActiveContents(type: string): Promise<SponsoredContent[]> {
-    return this.sponsorRepository.findActiveByType(type);
+  async list(): Promise<SponsoredContent[]> {
+    return await this.sponsoredRepository.listAll();
+  }
+
+  async getByType(type: SponsoredContent['type_content']): Promise<SponsoredContent[]> {
+    return await this.sponsoredRepository.findByType(type);
+  }
+
+  async extendDays(dto: UpdateSponsorshipDaysDTO): Promise<void> {
+    const existing = await this.sponsoredRepository.findById(dto.id);
+
+    if (!existing) throw new AppError('Patrocínio não encontrado');
+
+    const content = new SponsoredContent(
+      existing.getId(),
+      existing.getContentId(),
+      existing.getType(),
+      existing.getPricePerDay(),
+      existing.getDays(),
+      existing.getStartDate(),
+      existing.getEndDate(),
+      existing.getFilters()
+    );
+
+    content.extendDays(dto.extraDays);
+    await this.sponsoredRepository.save(content);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.sponsoredRepository.delete(id);
+  }
+
+  async expireOldSponsorships(): Promise<void> {
+    const all = await this.sponsoredRepository.listAll();
+
+    if (!all) throw new AppError('Patrocínio não encontrado');
+
+    for (const item of all) {
+      const content = new SponsoredContent(
+        item.getId(),
+        item.getContentId(),
+        item.getType(),
+        item.getPricePerDay(),
+        item.getDays(),
+        item.getStartDate(),
+        item.getEndDate(),
+        item.getFilters()
+      );
+      if (!content.isActive()) {
+        content.expire();
+        await this.sponsoredRepository.save(content);
+      }
+    }
   }
 }

@@ -1,9 +1,8 @@
-import { SponsoredService } from '@/services/SponsoredService';
-import { MongooseSponsoredContentRepository } from '@/infra/repositories/SponsoredContentRepository';
-import { MongooseSubscriptionRepository } from "@/infra/repositories/SubscriptionRepository";
+import { SponsorService } from '@/services/SponsoredService';
+import { SponsoredContentRepository } from '@/infra/repositories/SponsoredContentRepository';
+
 
 export function makeSponsoredContentService() {
-  const repositorySponsor = new MongooseSponsoredContentRepository();
-  const repositorySubscription = new MongooseSubscriptionRepository()
-  return new SponsoredService(repositorySponsor, repositorySubscription);
+  const repositorySponsor = new SponsoredContentRepository();
+  return new SponsorService(repositorySponsor);
 }
