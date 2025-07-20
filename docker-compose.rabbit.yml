@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbit
+    ports:
+      - "5672:5672"     # Porta para conexão AMQP
+      - "15672:15672"   # Porta para o painel de gerenciamento
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  sponsored-posts-api:
+    build: .
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_URL: amqp://user:pass@rabbitmq:5672
+    ports:
+      - "4000:4000" # porta da API
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - rabbitmq_net
+
+volumes:
+  rabbitmq_data:
+
+networks:
+  rabbitmq_net:
+    driver: bridge

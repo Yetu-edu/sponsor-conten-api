@@ -7,6 +7,7 @@ export class VerificationSealService {
   constructor(private readonly verificationSealRepository: IVerificationSealRepository) {}
 
   async create(user_id: string): Promise<VerificationSeal> {
+    
     const existing = await this.verificationSealRepository.findByUserId(user_id);
 
     if (existing) {
@@ -16,7 +17,7 @@ export class VerificationSealService {
     const seal = new VerificationSeal(
       randomUUID(),
       user_id,
-      false,
+      true,
       new Date()
     );
 
@@ -31,6 +32,15 @@ export class VerificationSealService {
     }
 
     seal.verify();
+    
+    //se o selo já estiver verificado, retorna mensagem que já está verificado
+    //e não atualiza o selo
+    if (seal.is_verified) {
+      throw new AppError('O selo já está verificado.', 400, {
+        user_id: seal.user_id,
+        seal_id: seal.id,
+      });
+    }
 
     return await this.verificationSealRepository.update(seal);
   }
@@ -40,6 +50,14 @@ export class VerificationSealService {
 
     if (!seal) {
       throw new AppError('Selo não encontrado para este usuário.');
+    }
+    //se o selo já estiver não verificado, retorna mensagem que já está não verificado
+    //e não atualiza o selo
+    if (!seal.is_verified) {
+      throw new AppError('O selo já está não verificado.', 400, {
+        user_id: seal.user_id,
+        seal_id: seal.id,
+      });
     }
 
     seal.unverify();

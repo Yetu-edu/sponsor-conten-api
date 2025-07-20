@@ -22,6 +22,22 @@ Este projeto utiliza as seguintes tecnologias:
 
 ---
 
+## 🧩 Arquitetura Geral da Solução de envio de notificações de conteúdos prestes a expirar e expirados
+Microserviço de Patrocínio detecta:
+
+📅 Quando faltar 1 dia para o patrocínio expirar.
+
+📅 No dia da expiração.
+
+Ele publica eventos no RabbitMQ:
+
+sponsorship.expiring_soon
+
+sponsorship.expired
+
+Outros microsserviços (como o de notificações, relatórios ou e-mails) podem consumir esses eventos.
+
+
 ## **📁 Estrutura de Pastas**
 
 ```bash

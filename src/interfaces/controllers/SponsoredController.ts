@@ -6,6 +6,7 @@ const createSponsorshipSchema = z.object({
   refContent: z.uuid(),
   refType: z.enum(['curso', 'video', 'mentoria', 'produto', 'bolsa', 'paper', 'ticket', 'flick']),
   days: z.number().min(1),
+  user_id: z.uuid(),
   filters: z.object({
     area_of_study: z.string(),
     interest: z.array(z.string()),
@@ -16,7 +17,7 @@ const createSponsorshipSchema = z.object({
 });
 
 const updateSponsorshipDaysSchema = z.object({
-  id: z.string(),
+  id: z.uuid(),
   extraDays: z.number().min(1),
 });
 
@@ -28,7 +29,7 @@ export class SponsorController {
 
   async create(request: Request, response: Response) {
     try {
-      const { days, refContent, refType, filters } = createSponsorshipSchema.parse(request.body);
+      const { days, refContent, refType, filters, user_id } = createSponsorshipSchema.parse(request.body);
 
       const service = makeSponsoredContentService();
 
@@ -37,6 +38,7 @@ export class SponsorController {
         refContent,
         refType,
         filters,
+        user_id
       });
 
       return response.status(201).send(sponsorship);
@@ -91,7 +93,7 @@ export class SponsorController {
         id
       });
 
-      return response.status(200).json({exntend_day});
+      return response.status(200).json(exntend_day);
 
     } catch (error) {
       return response.status(400).send({ error: 'Erro ao estender dias', details: error });
@@ -106,7 +108,7 @@ export class SponsorController {
 
       await service.delete(id);
 
-      return response.status(204).json({});
+      return response.status(204).json({menssage:"Patrocínio excluído com sucesso"});
     } catch (error) {
       return response.status(400).send({ error: 'Erro ao excluir patrocínio', details: error });
     }

@@ -26,7 +26,7 @@ const sponsorController = new SponsorController();
  *           schema:
  *             type: object
  *             properties:
- *               refContent:
+ *               user_id:
  *                 type: string
  *                 format: uuid
  *               refType:
@@ -110,7 +110,7 @@ sponsoredContentRoutes.get('/sponsor/by-type', sponsorController.getByType);
  *       200:
  *         description: Dias estendidos com sucesso
  */
-sponsoredContentRoutes.patch('/sponsor',  ensureAuthenticated, sponsorController.update);
+sponsoredContentRoutes.patch('/sponsor/extend-days',  ensureAuthenticated, sponsorController.update);
 
 /**
  * @swagger
