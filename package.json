@@ -19,6 +19,7 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "^6.11.1",
+    "amqplib": "^0.10.8",
     "bcryptjs": "^3.0.2",
     "bson": "^6.10.4",
     "bson-objectid": "^2.0.4",
@@ -35,6 +36,7 @@
     "zod": "^4.0.5"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.7",
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",

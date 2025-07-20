@@ -13,10 +13,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id              String   @id @default(uuid())
+  user_ref        String   @default(uuid())
+  email           String   @unique
+  password       String
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+  verify        verificationSeal?
+  sponsoredContent SponsoredContent[]
+}
+
+
 model SponsoredContent {
   id             String   @id @default(uuid())
-  ref_content    String
+  ref_content    String  @default(uuid())
   type_content   String
+  user_id        String
   price_per_day  Decimal
   days           Int
   total_price    Decimal
@@ -30,6 +43,8 @@ model SponsoredContent {
   created_at     DateTime      @default(now())
   updated_at     DateTime      @updatedAt
 
+  User      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
   @@map("sponsored_content")
 }
 
@@ -39,5 +54,6 @@ model verificationSeal {
   is_verified Boolean  @default(false)
   createdAt  DateTime @default(now())
 
+  User      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   @@map("verification_seal")
 }

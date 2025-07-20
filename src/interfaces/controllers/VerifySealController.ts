@@ -103,7 +103,7 @@ export class VerificationSealController {
 
       const result = await service.isUserVerified(user_id);
 
-      if(!result) return response.status(404).json({message:"Selo não encontrado"})
+      if(!result) return response.status(404).json({message:"Selo do usuário não  verificado"})
 
       return response.status(200).json({ isVerified: result });
     } catch(error) {

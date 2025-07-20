@@ -17,6 +17,7 @@ export class SponsoredContent {
     private ref_content: string,
     private type_content: SponsoredContentType,
     private price_per_day: number,
+    private user_id: string,
     private days: number,
     private start_date: Date,
     private end_date: Date,
@@ -30,6 +31,10 @@ export class SponsoredContent {
 
   getId(): string {
     return this.id;
+  }
+
+  getUserId(): string {
+    return this.user_id;
   }
 
   getContentId(): string {
